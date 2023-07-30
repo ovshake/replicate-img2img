@@ -75,5 +75,33 @@ To build this model, you can use `cog.yaml` config file. You can use replicate t
 ```bash
 cog predict -i image=@assets/sketch-mountains-input.jpg -i prompt="A van gogh painting"
 ```
-You can also use `curl` to use the endpoint as an API. You can find out more about it [here](https://replicate.com/docs).
+You can also use `curl` to use the endpoint as an API.
+```bash
+(sd) ➜  replicate-img2img git:(main) curl -s -X POST \
+  -d '{"version": "d991ed58d1254817879017e676da96d1c2c99976cac210395d14b17e1fb2b496", "input": {"image": "https://raw.githubusercontent.com/open-mmlab/mmdetection/main/resources/mmdet-logo.png", "prompt": "A van gogh style painting"}}' \
+  -H "Authorization: Token $REPLICATE_API_TOKEN" \
+  -H 'Content-Type: application/json' \
+  "https://api.replicate.com/v1/predictions" | jq
+
+```
+and the output will look like this
+```json
+{
+  "id": "ovbandjba7tcg2ffgi3hk2p2lm",
+  "version": "d991ed58d1254817879017e676da96d1c2c99976cac210395d14b17e1fb2b496",
+  "input": {
+    "image": "https://raw.githubusercontent.com/open-mmlab/mmdetection/main/resources/mmdet-logo.png",
+    "prompt": "A van gogh style painting"
+  },
+  "logs": "",
+  "error": null,
+  "status": "starting",
+  "created_at": "2023-07-30T15:59:23.763416844Z",
+  "urls": {
+    "cancel": "https://api.replicate.com/v1/predictions/ovbandjba7tcg2ffgi3hk2p2lm/cancel",
+    "get": "https://api.replicate.com/v1/predictions/ovbandjba7tcg2ffgi3hk2p2lm"
+  }
+}
+```
+Since this takes a long time, you need to keep polling to check when it completes. More details can be found [here](https://replicate.com/ovshake/replicate-ghibli-vangogh/api) on polling.
 Docs on cog can be found [here](https://github.com/replicate/cog).
