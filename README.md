@@ -65,7 +65,7 @@ image.save("assets/output.png")
 
 This code generates a new image based on the `sketch-mountains-input.jpg` image and the text prompt "A van gogh painting of a starry night". The generated image is saved as `output.png` in the `assets` directory.
 
-## Replicate.com
+## Run on Replicate
 
 This model is also available on replicate.com. You can access the model and run predictions using the web interface. You do not need to install any dependencies or write any code to use the model on replicate.com. Simply upload your image, enter your text prompt, and run the model to generate a new image.
 
@@ -105,3 +105,9 @@ and the output will look like this
 ```
 Since this takes a long time, you need to keep polling to check when it completes. More details can be found [here](https://replicate.com/ovshake/replicate-ghibli-vangogh/api) on polling.
 Docs on cog can be found [here](https://github.com/replicate/cog).
+
+## Things to Improve
+
+1. We can further finetune the prompt and play around with hyperparameteres to get better results.
+2. We can use other custom checkpoints such as [RealisticVision](https://civitai.com/models/91) to enhance our results.
+3. We can add a super resolution model to enhance the image quality.
