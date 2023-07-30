@@ -1,5 +1,5 @@
 build:
-  gpu: true
+  gpu: false
   system_packages:
     - "libgl1-mesa-glx"
     - "libglib2.0-0"

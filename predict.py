@@ -8,8 +8,9 @@ class Predictor(BasePredictor):
         """Load the model into memory to make running multiple predictions efficient"""
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.pipeline_model = "nitrosocke/Ghibli-Diffusion"
+        self.dtype = torch.float32 if self.device == "cpu" else torch.float16
         self.pipe = StableDiffusionImg2ImgPipeline.from_pretrained(self.pipeline_model,
-                                                                   torch_dtype=torch.float32).to(self.device)
+                                                                   torch_dtype=self.dtype).to(self.device)
         lms = LMSDiscreteScheduler.from_config(self.pipe.scheduler.config)
         self.pipe.scheduler = lms
 
@@ -18,7 +19,8 @@ class Predictor(BasePredictor):
                 prompt: str = Input(description="Guidance prompt for the image transformation"),
                 strength: float = 0.75,
                 guidance_scale: float = 7.5,
-                seed: int = 1024
+                seed: int = 1024,
+                num_inference_steps: int = 50
                ) -> Path:
         """Run a single prediction on the model"""
         if image is None or prompt is None:
@@ -33,11 +35,8 @@ class Predictor(BasePredictor):
 
         # Generate initial image
         output_image = self.pipe(prompt=prompt, image=init_image, strength=strength,
-                                 guidance_scale=guidance_scale, generator=generator).images[0]
+                                 guidance_scale=guidance_scale, generator=generator, num_inference_steps=num_inference_steps).images[0]
 
-        # Generate final image
-        output_image = self.pipe(prompt=prompt, image=init_image, strength=strength,
-                                 guidance_scale=guidance_scale, generator=generator).images[0]
 
         # Save and return output image path
         output_path = Path("/tmp/output_image.jpg")

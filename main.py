@@ -10,8 +10,9 @@ from urllib.parse import urlparse
 
 def initialize_pipeline(pipeline_model="nitrosocke/Ghibli-Diffusion", device="cuda"):
     # Initialize pipeline
+    dtype = torch.float32 if device == "cpu" else torch.float16
     pipe = StableDiffusionImg2ImgPipeline.from_pretrained(pipeline_model,
-                                                          torch_dtype=torch.float16).to(device)
+                                                          torch_dtype=dtype).to(device)
     # Update scheduler
     lms = LMSDiscreteScheduler.from_config(pipe.scheduler.config)
     pipe.scheduler = lms
@@ -40,16 +41,13 @@ def generate_image(pipe, device="cuda", url_or_filepath=None, prompt=None,
 
     # Generate initial image
     image = pipe(prompt=prompt, image=init_image, strength=strength,
-                 guidance_scale=guidance_scale, generator=generator).images[0]
-
-    # Generate final image
-    image = pipe(prompt=prompt, image=init_image, strength=strength,
-                 guidance_scale=guidance_scale, generator=generator).images[0]
+                 guidance_scale=guidance_scale, generator=generator, num_inference_steps=5).images[0]
 
     return image
 
 if __name__ == '__main__':
-    pipe = initialize_pipeline(pipeline_model="nitrosocke/Ghibli-Diffusion", device="cuda")
-    image = generate_image(pipe, device="cuda", url_or_filepath="assets/sketch-mountains-input.jpg", prompt="A van gogh painting of a starry night.")
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    pipe = initialize_pipeline(pipeline_model="nitrosocke/Ghibli-Diffusion", device=device)
+    image = generate_image(pipe, device=device, url_or_filepath="assets/sketch-mountains-input.jpg", prompt="A van gogh painting of a starry night.")
     image.save("assets/output.png")
 
