@@ -9,7 +9,8 @@ class Predictor(BasePredictor):
     """
     def setup(self):
         """
-        Load the model into memory to make running multiple predictions efficient. This method is automatically called when an instance of the Predictor class is created.
+        Load the model into memory to make running multiple predictions efficient.
+        This method is automatically called when an instance of the Predictor class is created.
         """
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.pipeline_model = "nitrosocke/Ghibli-Diffusion"
