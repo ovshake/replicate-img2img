@@ -9,6 +9,16 @@ import os
 from urllib.parse import urlparse
 
 def initialize_pipeline(pipeline_model="nitrosocke/Ghibli-Diffusion", device="cuda"):
+    """
+    Initializes a diffusion-based image-to-image pipeline with a specified model and device.
+
+    Args:
+        pipeline_model (str, optional): The identifier of the pretrained model to load. Defaults to "nitrosocke/Ghibli-Diffusion".
+        device (str, optional): The type of device to run the model on. Should be either "cuda" or "cpu". Defaults to "cuda".
+
+    Returns:
+        pipe: An instance of StableDiffusionImg2ImgPipeline loaded with the pretrained model and set to run on the specified device.
+    """
     # Initialize pipeline
     dtype = torch.float32 if device == "cpu" else torch.float16
     pipe = StableDiffusionImg2ImgPipeline.from_pretrained(pipeline_model,
@@ -21,6 +31,25 @@ def initialize_pipeline(pipeline_model="nitrosocke/Ghibli-Diffusion", device="cu
 
 def generate_image(pipe, device="cuda", url_or_filepath=None, prompt=None,
                    strength=0.75, guidance_scale=7.5, seed=1024):
+    """
+    Generates a new image based on an initial image and a textual prompt.
+
+    Args:
+        pipe: The initialized image-to-image pipeline to generate images with.
+        device (str, optional): The type of device to run the model on. Should be either "cuda" or "cpu". Defaults to "cuda".
+        url_or_filepath (str, optional): The URL or local filepath of the initial image. This must be provided.
+        prompt (str, optional): The textual prompt to guide the image generation. This must be provided.
+        strength (float, optional): The strength of the guidance prompt. Defaults to 0.75.
+        guidance_scale (float, optional): The scale of the guidance. Defaults to 7.5.
+        seed (int, optional): The seed for the random generator. Defaults to 1024.
+
+    Returns:
+        image: The generated image as a tensor.
+
+    Raises:
+        ValueError: If either 'url_or_filepath' or 'prompt' is not provided.
+    """
+
     if url_or_filepath is None or prompt is None:
         raise ValueError("Both 'url_or_filepath' and 'prompt' must be provided.")
 

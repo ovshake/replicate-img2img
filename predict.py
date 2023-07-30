@@ -4,8 +4,13 @@ from PIL import Image
 from diffusers import StableDiffusionImg2ImgPipeline, LMSDiscreteScheduler
 
 class Predictor(BasePredictor):
+    """
+    Class for generating images based on an initial image and a textual prompt using a pretrained diffusion-based image-to-image pipeline.
+    """
     def setup(self):
-        """Load the model into memory to make running multiple predictions efficient"""
+        """
+        Load the model into memory to make running multiple predictions efficient. This method is automatically called when an instance of the Predictor class is created.
+        """
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.pipeline_model = "nitrosocke/Ghibli-Diffusion"
         self.dtype = torch.float32 if self.device == "cpu" else torch.float16
@@ -22,7 +27,23 @@ class Predictor(BasePredictor):
                 seed: int = 1024,
                 num_inference_steps: int = 50
                ) -> Path:
-        """Run a single prediction on the model"""
+        """
+        Runs a single prediction on the model. Transforms the input image based on the provided textual prompt.
+
+        Args:
+            image (Path): Path of the input image to transform.
+            prompt (str): Textual prompt to guide the image transformation.
+            strength (float, optional): Strength of the guidance prompt. Defaults to 0.75.
+            guidance_scale (float, optional): Scale of the guidance. Defaults to 7.5.
+            seed (int, optional): Seed for the random generator. Defaults to 1024.
+            num_inference_steps (int, optional): Number of inference steps to perform. Defaults to 50.
+
+        Returns:
+            Path: Path to the output image generated.
+
+        Raises:
+            ValueError: If either 'image' or 'prompt' is not provided.
+        """
         if image is None or prompt is None:
             raise ValueError("Both 'image' and 'prompt' must be provided.")
 
